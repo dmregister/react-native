@@ -13,5 +13,9 @@ jobs:
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+      - name: Setup Node.js 16.14.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.0
       - name: Build AAR
         run: docker run --name rn-build -v $PWD:/pwd -w /pwd reactnativecommunity/react-native-android /bin/sh -c "./gradlew installArchives"

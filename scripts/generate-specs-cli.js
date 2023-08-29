@@ -48,6 +48,7 @@ const argv = yargs
   ).argv;
 
 function main() {
+  console.log('argv', argv);
   executor.execute(
     argv.platform,
     argv.schemaPath,

@@ -79,46 +79,55 @@ function generateSpec(
   packageName,
   libraryType,
 ) {
-  validateLibraryType(libraryType);
+  try {
+    validateLibraryType(libraryType);
 
-  let schema = readAndParseSchema(schemaPath);
+    let schema = readAndParseSchema(schemaPath);
 
-  createOutputDirectoryIfNeeded(outputDirectory, libraryName);
-  function composePath(intermediate) {
-    return path.join(outputDirectory, intermediate, libraryName);
-  }
+    createOutputDirectoryIfNeeded(outputDirectory, libraryName);
+    function composePath(intermediate) {
+      return path.join(outputDirectory, intermediate, libraryName);
+    }
 
-  // These are hardcoded and should not be changed.
-  // The codegen creates some C++ code with #include directive
-  // which uses these paths. Those directive are not customizable yet.
-  createFolderIfDefined(composePath('react/renderer/components/'));
-  createFolderIfDefined(composePath('./'));
+    // These are hardcoded and should not be changed.
+    // The codegen creates some C++ code with #include directive
+    // which uses these paths. Those directive are not customizable yet.
+    createFolderIfDefined(composePath('react/renderer/components/'));
+    createFolderIfDefined(composePath('./'));
 
-  RNCodegen.generate(
-    {
-      libraryName,
-      schema,
-      outputDirectory,
-      packageName,
-    },
-    {
-      generators: GENERATORS[libraryType][platform],
-    },
-  );
+    RNCodegen.generate(
+      {
+        libraryName,
+        schema,
+        outputDirectory,
+        packageName,
+      },
+      {
+        generators: GENERATORS[libraryType][platform],
+      },
+    );
 
-  if (platform === 'android') {
-    // Move all components C++ files to a structured jni folder for now.
-    // Note: this should've been done by RNCodegen's generators, but:
-    // * the generators don't support platform option yet
-    // * this subdir structure is Android-only, not applicable to iOS
-    const files = fs.readdirSync(outputDirectory);
-    const jniOutputDirectory = `${outputDirectory}/jni/react/renderer/components/${libraryName}`;
-    mkdirp.sync(jniOutputDirectory);
-    files
-      .filter(f => f.endsWith('.h') || f.endsWith('.cpp'))
-      .forEach(f => {
-        fs.renameSync(`${outputDirectory}/${f}`, `${jniOutputDirectory}/${f}`);
-      });
+    if (platform === 'android') {
+      // Move all components C++ files to a structured jni folder for now.
+      // Note: this should've been done by RNCodegen's generators, but:
+      // * the generators don't support platform option yet
+      // * this subdir structure is Android-only, not applicable to iOS
+      const files = fs.readdirSync(outputDirectory);
+      const jniOutputDirectory = `${outputDirectory}/jni/react/renderer/components/${libraryName}`;
+      mkdirp.sync(jniOutputDirectory);
+      files
+        .filter(f => f.endsWith('.h') || f.endsWith('.cpp'))
+        .forEach(f => {
+          fs.renameSync(
+            `${outputDirectory}/${f}`,
+            `${jniOutputDirectory}/${f}`,
+          );
+        });
+    }
+  } catch (err) {
+    console.log(err);
+
+    throw err;
   }
 }
 

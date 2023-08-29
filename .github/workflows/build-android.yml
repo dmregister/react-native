@@ -1,0 +1,17 @@
+name: Build Android
+on:
+  workflow_dispatch:
+
+jobs:
+  build-aar:
+    name: Build AAR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Free up space by removing unnecessary folders
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+      - name: Build AAR
+        run: docker run --name rn-build -v $PWD:/pwd -w /pwd reactnativecommunity/react-native-android /bin/sh -c "./gradlew installArchives"

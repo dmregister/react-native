@@ -57,13 +57,7 @@ abstract class GenerateCodegenArtifactsTask : Exec() {
 
     val (resolvedLibraryName, resolvedCodegenJavaPackageName) = resolveTaskParameters()
     setupCommandLine(resolvedLibraryName, resolvedCodegenJavaPackageName)
-
-    try {
-      super.exec()
-    } catch ( e:Exception ) {
-      println("e.message ${e.message}")
-      throw e
-    }
+    super.exec()
   }
 
   private fun checkForDeprecatedProperty() {

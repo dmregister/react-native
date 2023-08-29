@@ -18,4 +18,4 @@ jobs:
         with:
           node-version: 16.14.0
       - name: Build AAR
-        run: docker run --name rn-build -v $PWD:/pwd -w /pwd reactnativecommunity/react-native-android /bin/sh -c "./gradlew --stacktrace installArchives"
+        run: docker run --name rn-build -v $PWD:/pwd -w /pwd reactnativecommunity/react-native-android /bin/sh -c "./gradlew --debug --stacktrace installArchives"
